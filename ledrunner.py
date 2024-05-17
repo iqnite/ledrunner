@@ -7,7 +7,7 @@ gpio.setmode(gpio.BCM)
 
 # All the sequences that can be played
 GAMES = [
-    [0,0,0,0,0,0,1,2,3,3,2,1,3,2,3,1,3,1,3,2,3,2,1,2,2,1,3,3,3,1,0,0,0,0,0,0]
+    [0,0,0,0,0,0,1,2,3,3,2,1,3,2,3,1,3,1,3,2,3,2,1,2,2,1,3,3,3,1,0,0,0,0,0,0,0,0,0,0,0,0]
 ]
 
 
@@ -19,7 +19,7 @@ gpio.setup(PINBLUE, gpio.IN, gpio.PUD_UP)
 
 PINPIXELS = board.D18
 AMOUNTPIXELS = 8
-# Set brigthness to a very low number so no external supply is required
+# Set brigthness to a very HIGH number so no external supply is required
 pixels = neopixel.NeoPixel(PINPIXELS, AMOUNTPIXELS, brightness=0.01)
 
 # Only the first 6 LEDs are being used
@@ -42,10 +42,10 @@ def update(lst, active):
 def check(active):
     # Returns 1 if wrong, 0 if correct
     buttonPressed = 0
-    if gpio.input(PINRED) == gpio.LOW: buttonPressed += 1
-    if gpio.input(PINGREEN) == gpio.LOW: buttonPressed += 2
-    if gpio.input(PINBLUE) == gpio.LOW: buttonPressed += 3
-    if gpio.input(PINRED) == gpio.LOW and gpio.input(PINGREEN) == gpio.LOW: buttonPressed = 0
+    if gpio.input(PINRED) == gpio.HIGH: buttonPressed += 1
+    if gpio.input(PINGREEN) == gpio.HIGH: buttonPressed += 2
+    if gpio.input(PINBLUE) == gpio.HIGH: buttonPressed += 3
+    if gpio.input(PINRED) == gpio.HIGH and gpio.input(PINGREEN) == gpio.HIGH: buttonPressed = 0
     return (0 if buttonPressed == active else 1)
         
     
@@ -55,26 +55,35 @@ wrong: int  # Mistakes the player did
 
 print("Hello, and welcome to LEDRUNNER!")
 while True:
-    print("Press all 3 buttons together to play!")
-    while False and gpio.input(PINRED) == gpio.HIGH and gpio.input(PINGREEN) == gpio.HIGH and gpio.input(PINBLUE) == gpio.HIGH:
+    print("Press any button to play!")
+    c = 0
+    while (gpio.input(PINRED) == gpio.HIGH) and (gpio.input(PINGREEN) == gpio.HIGH) and (gpio.input(PINBLUE) == gpio.HIGH):
         sleep(0.1)
+        update([1,2,3,3,2,1,1,2,3,3,2,1], c)
+        if c >= 6: c = 0
+        else: c += 1
     game = GAMES[0]
     delay = 0.5
     
     wrong = 0
     
     # Countdown
-    for i in range(2):
+    for i in range(6):
+        pixels[i] = (0,0,0)
+    for i in range(3):
         pixels[i] = (255,0,0)
-    for i in range(2):
+    for i in range(3):
         sleep(1)
         pixels[3-i] = (0,0,0)
+    sleep(1)
     print("Go!")
         
     # Game start
     for led in range(len(game) - 6):
         update(game, led)
         sleep(delay)
+        if check(led) == 0:
+            print("Correct!")
         wrong += check(led)
     
     print("Finished! Your accuracy: " + str(100 * (len(game)-7-wrong) / (len(game)-7)) + "%.")
