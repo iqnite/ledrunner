@@ -7,7 +7,7 @@ gpio.setmode(gpio.BCM)
 
 # All the sequences that can be played
 GAMES = [
-    [0,0,0,0,0,0,1,2,3,3,2,1,3,2,3,1,3,1,3,2,3,2,1,2,2,1,3,3,3,1,0,0,0,0,0,0,0,0,0,0,0,0]
+    [0,0,0,0,0,0,1,2,3,3,2,1,3,2,3,1,3,1,3,2,3,2,1,2,2,1,3,3,3,1,0,0,0,0,0,0]
 ]
 
 
@@ -42,10 +42,10 @@ def update(lst, active):
 def check(active):
     # Returns 1 if wrong, 0 if correct
     buttonPressed = 0
-    if gpio.input(PINRED) == gpio.HIGH: buttonPressed += 1
-    if gpio.input(PINGREEN) == gpio.HIGH: buttonPressed += 2
-    if gpio.input(PINBLUE) == gpio.HIGH: buttonPressed += 3
-    if gpio.input(PINRED) == gpio.HIGH and gpio.input(PINGREEN) == gpio.HIGH: buttonPressed = 0
+    if gpio.input(PINRED) == gpio.LOW: buttonPressed += 1
+    if gpio.input(PINGREEN) == gpio.LOW: buttonPressed += 2
+    if gpio.input(PINBLUE) == gpio.LOW: buttonPressed += 3
+    if gpio.input(PINRED) == gpio.LOW and gpio.input(PINGREEN) == gpio.LOW: buttonPressed = 0
     return (0 if buttonPressed == active else 1)
         
     
@@ -62,6 +62,7 @@ while True:
         update([1,2,3,3,2,1,1,2,3,3,2,1], c)
         if c >= 6: c = 0
         else: c += 1
+
     game = GAMES[0]
     delay = 0.5
     
@@ -72,18 +73,17 @@ while True:
         pixels[i] = (0,0,0)
     for i in range(3):
         pixels[i] = (255,0,0)
-    for i in range(3):
-        sleep(1)
+    while not ((gpio.input(PINRED) == gpio.HIGH) and (gpio.input(PINGREEN) == gpio.HIGH) and (gpio.input(PINBLUE) == gpio.HIGH)):
+        sleep(0.1)
+    for i in range(4):
         pixels[3-i] = (0,0,0)
-    sleep(1)
+        sleep(1)
     print("Go!")
         
     # Game start
     for led in range(len(game) - 6):
         update(game, led)
         sleep(delay)
-        if check(led) == 0:
-            print("Correct!")
-        wrong += check(led)
+        wrong += check(game[led])
     
-    print("Finished! Your accuracy: " + str(100 * (len(game)-7-wrong) / (len(game)-7)) + "%.")
+    print("Finished! Your accuracy: " + str(round((100 * (len(game)-12-wrong) / (len(game)-12)), 1)) + "%.")
