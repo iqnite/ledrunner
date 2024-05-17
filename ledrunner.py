@@ -53,15 +53,29 @@ game: list  # The currently active sequence
 delay: float  # Time the player has to react
 wrong: int  # Mistakes the player did
 
-print("Hello, and welcome to LEDRUNNER!")
+print("Hello, and welcome to")
+print("|       -----   +--\\")
+print("|               |   \\")
+print("|       -----   |    |")
+print("|               |   /")
+print("+----   -----   +--/")
+print("R   U   N   N   E   R")
 while True:
     print("Press any button to play!")
     c = 0
-    while (gpio.input(PINRED) == gpio.HIGH) and (gpio.input(PINGREEN) == gpio.HIGH) and (gpio.input(PINBLUE) == gpio.HIGH):
-        sleep(0.1)
+    p = 0
+    while p < 3:
+        noButtonPressed = (gpio.input(PINRED) == gpio.HIGH) and (gpio.input(PINGREEN) == gpio.HIGH) and (gpio.input(PINBLUE) == gpio.HIGH)
+        if p == 0 and noButtonPressed:
+            p = 1
+        if p == 1 and not noButtonPressed:
+            p = 2
+        if p == 2 and noButtonPressed:
+            p = 3
         update([1,2,3,3,2,1,1,2,3,3,2,1], c)
         if c >= 6: c = 0
         else: c += 1
+        sleep(0.1)
 
     game = GAMES[0]
     delay = 0.5
@@ -73,8 +87,6 @@ while True:
         pixels[i] = (0,0,0)
     for i in range(3):
         pixels[i] = (255,0,0)
-    while not ((gpio.input(PINRED) == gpio.HIGH) and (gpio.input(PINGREEN) == gpio.HIGH) and (gpio.input(PINBLUE) == gpio.HIGH)):
-        sleep(0.1)
     for i in range(4):
         pixels[3-i] = (0,0,0)
         sleep(1)
