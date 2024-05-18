@@ -19,7 +19,7 @@ gpio.setup(PINBLUE, gpio.IN, gpio.PUD_UP)
 
 PINPIXELS = board.D18
 AMOUNTPIXELS = 8
-# Set brigthness to a very HIGH number so no external supply is required
+# Set brightness to a low number so no external supply is required
 pixels = neopixel.NeoPixel(PINPIXELS, AMOUNTPIXELS, brightness=0.01)
 
 # Only the first 6 LEDs are being used
@@ -60,6 +60,7 @@ print("|       -----   |    |")
 print("|               |   /")
 print("+----   -----   +--/")
 print("R   U   N   N   E   R")
+print("Hold the button with the color of the lowest LED to earn points! Every wrong button press will result in a penalty. Good luck!")
 while True:
     print("Press any button to play!")
     c = 0
