@@ -100,6 +100,15 @@ while True:
         sleep(delay)
         wrong += check(game[led])
     
-    print("Finished! Your accuracy: " + str(round(
-        (100 * (len(game)-(2*USEDPIXELS)-wrong) / (len(game)-(2*USEDPIXELS))), 
-        1)) + "%.")
+
+    accuracy = 100 * (len(game)-(2*USEDPIXELS)-wrong) / (len(game)-(2*USEDPIXELS))
+    print("Finished! Your accuracy: " + str(round(accuracy, 1)) + "%")
+    print(
+        ("GG! Prefect game!"                             if accuracy > 99 else 
+        ("Great job!"                                    if accuracy > 90 else
+        ("Nicely done!"                                  if accuracy > 80 else
+        ("Not the best, but also not the worst!"         if accuracy > 70 else
+        ("You can do better! Try harder!"                if accuracy > 60 else
+        ("That wasn't exactly good. Take more practice!" if accuracy > 0 else
+        ("Are you kidding? Check that everything is wired up correctly and read the instructions!"
+        ))))))))
