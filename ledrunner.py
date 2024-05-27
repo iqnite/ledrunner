@@ -1,3 +1,10 @@
+'''
+LEDrunner
+v1.0
+By Philipp D.
+May 2024
+'''
+
 import RPi.GPIO as gpio
 import board
 import neopixel
@@ -27,6 +34,7 @@ for i in range(8):
     pixels[i] = (0,0,0)
 
 
+# "Moves" the lights on the strip
 def update(lst, active):
     global pixels
     for i in range(USEDPIXELS):
@@ -39,8 +47,8 @@ def update(lst, active):
         elif leds[i] == 3: pixels[i] = (0,0,255)
         
 
+# Returns 1 if wrong, 0 if correct
 def check(active):
-    # Returns 1 if wrong, 0 if correct
     buttonPressed = 0
     if gpio.input(PINRED) == gpio.LOW: buttonPressed += 1
     if gpio.input(PINGREEN) == gpio.LOW: buttonPressed += 2
@@ -63,8 +71,8 @@ print("R   U   N   N   E   R")
 print("Hold the button with the color of the lowest LED to earn points! Every wrong button press will result in a penalty. Good luck!")
 while True:
     print("Press any button to play!")
-    c = 0
-    p = 0
+    c = 0  # Shift of idle sequence
+    p = 0  # Only start when the player has pressed and left a button
     while p < 3:
         noButtonPressed = (gpio.input(PINRED) == gpio.HIGH) and (gpio.input(PINGREEN) == gpio.HIGH) and (gpio.input(PINBLUE) == gpio.HIGH)
         if p == 0 and noButtonPressed:
@@ -79,6 +87,7 @@ while True:
         else: c += 1
         sleep(0.1)
 
+    # The zeroes at the beginning and end of the list serve as buffers to avoid list overflows and to make the start easier
     game = [0 for _ in range(USEDPIXELS)] + GAMES[0] + [0 for _ in range(USEDPIXELS)]
     delay = 0.5
     
@@ -89,10 +98,10 @@ while True:
         pixels[i] = (0,0,0)
     for i in range(3):
         pixels[i] = (255,0,0)
-    for i in range(4):
-        pixels[3-i] = (0,0,0)
+    for i in range(3):
+        pixels[2-i] = (0,0,0)
         sleep(1)
-    print("Go!")
+    print("GO when a LED reaches the bottom!")
         
     # Game start
     for led in range(len(game) - USEDPIXELS):
