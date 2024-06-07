@@ -1,6 +1,6 @@
 '''
 LEDrunner
-v1.0a
+v1.0b
 By Philipp D.
 May 2024
 '''
@@ -47,14 +47,15 @@ def update(lst, active):
         elif leds[i] == 3: pixels[i] = (0,0,255)
         
 
-# Returns 1 if wrong, 0 if correct
+# Checks if the player is pressing the correct button
 def check(active):
+    if gpio.input(PINRED) == gpio.LOW and gpio.input(PINGREEN) == gpio.LOW:
+        return False
     buttonPressed = 0
-    if gpio.input(PINRED) == gpio.LOW: buttonPressed += 1
+    if gpio.input(PINRED) == gpio.LOW:   buttonPressed += 1
     if gpio.input(PINGREEN) == gpio.LOW: buttonPressed += 2
-    if gpio.input(PINBLUE) == gpio.LOW: buttonPressed += 3
-    if gpio.input(PINRED) == gpio.LOW and gpio.input(PINGREEN) == gpio.LOW: buttonPressed = 0
-    return (0 if buttonPressed == active else 1)
+    if gpio.input(PINBLUE) == gpio.LOW:  buttonPressed += 3
+    return (buttonPressed == active)
         
     
 game: list  # The currently active sequence
@@ -107,7 +108,8 @@ while True:
     for led in range(len(game) - USEDPIXELS):
         update(game, led)
         sleep(delay)
-        wrong += check(game[led])
+        if not check(game[led]):
+            wrong += 1
     
 
     accuracy = 100 * (len(game)-(2*USEDPIXELS)-wrong) / (len(game)-(2*USEDPIXELS))
