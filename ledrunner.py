@@ -1,6 +1,6 @@
 '''
 LEDrunner
-v1.0
+v1.0a
 By Philipp D.
 May 2024
 '''
@@ -68,7 +68,7 @@ print("|       -----   |    |")
 print("|               |   /")
 print("+----   -----   +--/")
 print("R   U   N   N   E   R")
-print("Hold the button with the color of the lowest LED to earn points! Every wrong button press will result in a penalty. Good luck!")
+print("Hold the button with the color of the LED at the bottom to earn points! Good luck!")
 while True:
     print("Press any button to play!")
     c = 0  # Shift of idle sequence
@@ -99,8 +99,8 @@ while True:
     for i in range(3):
         pixels[i] = (255,0,0)
     for i in range(3):
-        pixels[2-i] = (0,0,0)
         sleep(1)
+        pixels[2-i] = (0,0,0)
     print("GO when a LED reaches the bottom!")
         
     # Game start
